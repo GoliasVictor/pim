@@ -1,8 +1,15 @@
 mod commands;
-use std::path::PathBuf;
-
+mod environment_type;
+pub mod metadata;
+pub mod source;
+pub use source::*;
+pub use environment_type::EnvironmentType;
+use std::{path::PathBuf, str::FromStr, error::Error};
 use clap::{command, Parser};
 use commands::Commands;
+
+
+
 
 #[derive(Parser, Debug)]
 #[command(name = "git")]
@@ -17,6 +24,10 @@ struct Args {
 fn main() {
     let args = Args::parse();
 
-    println!("{:?}", args.command)
+    if let Commands::Open { project } =  args.command {
+        let provider = MetadataProvider::new();
+    
+        println!("{:?}", provider.get_meta(&PathBuf::from_str(&project).expect("")))
+    }
     
 }

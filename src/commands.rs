@@ -1,11 +1,6 @@
-use clap::{Subcommand, ValueEnum};
+use clap::{Subcommand};
+use crate::EnvironmentType;
 
-#[derive(ValueEnum, Copy, Clone, Debug, PartialEq, Eq)]
-pub enum ProjectsTypes {
-	Folder,
-	Project,
-	SubProject
-}
 
 #[derive(Debug, Subcommand)]
 pub enum Commands {
@@ -26,7 +21,7 @@ pub enum Commands {
 		#[arg(short, long)]
 		flat : bool,
 		#[arg(short , long)]
-		r#type : Option<ProjectsTypes>,
+		r#type : Option<EnvironmentType>,
 		#[arg(short, long)]
 		max_depth : Option<i32>
 	},
