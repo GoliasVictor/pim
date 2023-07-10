@@ -2,9 +2,11 @@ mod commands;
 mod environment_type;
 pub mod metadata;
 pub mod source;
+pub mod mapper;
+pub mod enviroment;
 pub use source::*;
 pub use environment_type::EnvironmentType;
-use std::{path::PathBuf, str::FromStr, error::Error};
+use std::{path::PathBuf, str::FromStr};
 use clap::{command, Parser};
 use commands::Commands;
 
