@@ -6,16 +6,16 @@ use crate::EnvironmentType;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Metadata {
 	#[serde(alias="type")]
-	pub environment_type : EnvironmentType,
+	pub environment_type : Option<EnvironmentType>,
 	pub name : Option<String>,
 	pub description : Option<String>, 
 	pub languages : Option<Vec<String>>,
 	pub open_command : Option<String>,
 	pub init_command : Option<String>,
-	pub sub_projects : Option<Vec<Metadata>>, 
+	#[serde(alias="sub_projects")]
+	pub children : Option<Vec<Metadata>>, 
 	pub scripts : Option<HashMap<String, String>>,
-	#[serde(skip)]
-	pub path : PathBuf,
+	pub path : Option<PathBuf>,
 	#[serde(skip)]
 	pub source : PathBuf,
 }

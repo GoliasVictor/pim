@@ -1,12 +1,13 @@
 mod commands;
 mod environment_type;
 pub mod metadata;
-pub mod source;
+pub mod providers;
 pub mod mapper;
 pub mod enviroment;
-pub use source::*;
+use enviroment::Environment;
+pub use providers::*;
 pub use environment_type::EnvironmentType;
-use std::{path::PathBuf, str::FromStr};
+use std::{path::PathBuf};
 use clap::{command, Parser};
 use commands::Commands;
 
@@ -26,10 +27,13 @@ struct Args {
 fn main() {
     let args = Args::parse();
 
-    if let Commands::Open { project } =  args.command {
-        let provider = MetadataProvider::new();
-    
-        println!("{:?}", provider.get_meta(&PathBuf::from_str(&project).expect("")))
+    if let Commands::List { flat: _, r#type: _, max_depth: _ } = args.command {
+        let enviroments = mapper::map_directory(&args.root.expect(""));
+        list(enviroments, "".to_string())
+    }   
+}
+fn list(enviroments : Vec<Environment>, prefix : String){
+    for env in enviroments {
+        list(env.children,"-".to_string() + &prefix );
     }
-    
 }
