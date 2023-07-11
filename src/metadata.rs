@@ -1,6 +1,6 @@
-use crate::EnvironmentType;
+use crate::prelude::*;
 use serde::{Deserialize, Serialize};
-use std::{collections::HashMap, path::PathBuf};
+use std::collections::HashMap;
 
 #[derive(Debug, Serialize, Deserialize, Default)]
 pub struct Metadata {

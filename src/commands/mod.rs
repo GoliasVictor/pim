@@ -1,12 +1,6 @@
-use std::path::Path;
-
-use ptree::{self, print_tree, TreeBuilder};
-
-use crate::{
-    enviroment::Environment,
-    mapper::{self, find_environment},
-    EnvironmentType,
-};
+use crate::mapper;
+use crate::prelude::*;
+use ptree::{print_tree, TreeBuilder};
 
 pub fn command_list(
     root: &Path,
@@ -18,12 +12,12 @@ pub fn command_list(
     let envtype = envtype.unwrap_or(EnvironmentType::Project);
 
     let root = folder
-        .and_then(|f| find_environment(root, &f))
+        .and_then(|f| mapper::find_environment(root, &f))
         .map(|e| e.source)
         .unwrap_or(root.to_path_buf());
 
     let mut enviroments = mapper::map_directory(&root);
-  
+
     if flat {
         while let Some(env) = enviroments.pop() {
             println!("{}", env.name);

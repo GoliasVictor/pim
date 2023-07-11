@@ -1,9 +1,6 @@
-use crate::{metadata::Metadata, environment_type, EnvironmentType};
+use crate::prelude::*;
 use serde::Deserialize;
-use std::{
-    fs::{self, File},
-    path::{Path, PathBuf},
-};
+use std::fs::{self, File};
 
 #[derive(Debug, Deserialize)]
 struct Folder {

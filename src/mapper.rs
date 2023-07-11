@@ -1,12 +1,6 @@
-use std::{
-    fs::{read_dir, DirEntry},
-    path::Path,
-};
-
-use crate::{
-    enviroment::{Environment, EnvironmentDetails},
-    providers, EnvironmentType,
-};
+use crate::prelude::*;
+use crate::providers;
+use std::fs::{read_dir, DirEntry};
 
 fn name_else_filename(opname: Option<String>, path: &Path) -> Option<String> {
     if let Some(name) = opname {

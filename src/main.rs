@@ -1,15 +1,15 @@
 mod commands_args;
 mod environment_type;
 mod commands;
-pub mod enviroment;
-pub mod mapper;
-pub mod metadata;
-pub mod providers;
+mod prelude;
+mod enviroment;
+mod mapper;
+mod metadata;
+mod providers;
+
 use clap::{command, Parser};
 use commands_args::CommandsArgs;
-use enviroment::Environment;
-pub use environment_type::EnvironmentType;
-pub use providers::*;
+use environment_type::EnvironmentType;
 use std::{path::PathBuf, env};
 
 #[derive(Parser, Debug)]

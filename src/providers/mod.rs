@@ -1,5 +1,4 @@
-use crate::metadata::Metadata;
-use std::path::Path;
+use crate::prelude::*; 
 mod dotmeta_provider;
 mod vscode_provider;
 

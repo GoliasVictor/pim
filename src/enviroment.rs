@@ -1,6 +1,5 @@
-use std::{collections::HashMap, path::PathBuf};
-
-use crate::{metadata::Metadata, EnvironmentType};
+use crate::prelude::*;
+use std::collections::HashMap;
 
 #[derive(Debug)]
 pub enum EnvironmentDetails {

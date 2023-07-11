@@ -1,5 +1,5 @@
-use std::{fs::File, path::Path};
-use crate::metadata::Metadata;
+use crate::prelude::*;
+use std::fs::File;
 
 pub fn get_meta(path : &Path) -> Option<Metadata> {
 	return File::open(path.join(".meta"))
