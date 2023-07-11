@@ -4,10 +4,11 @@ use clap::Args;
 
 use crate::{prelude::*, mapper::find_environment};
 
-
+/// Open the project
 #[derive(Debug, Args, Clone)]
 #[command(arg_required_else_help = true)]
 pub struct CommandOpen {
+	/// Project to open
 	project: String,
 }
 

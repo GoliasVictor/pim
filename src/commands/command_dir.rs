@@ -2,7 +2,7 @@ use clap::{Args, command};
 
 use crate::{prelude::*, mapper::find_environment};
 
-
+/// Show the directory of project
 #[derive(Debug, Args, Clone)]
 #[command(arg_required_else_help = true)]
 pub struct CommandDir {

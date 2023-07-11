@@ -1,5 +1,4 @@
 use crate::prelude::*;
-use std::collections::HashMap;
 
 #[derive(Debug)]
 pub enum EnvironmentDetails {

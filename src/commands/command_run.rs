@@ -8,6 +8,7 @@ use crate::{
     prelude::*,
 };
 
+/// Run a script
 #[derive(Debug, Args, Clone)]
 #[command(alias="r")]
 pub struct CommandRun {

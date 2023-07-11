@@ -4,13 +4,13 @@ use clap::Args;
 use ptree;
 use ptree::{print_tree, TreeBuilder};
 
-
 #[derive(Debug, Args, Clone)]
+/// List projects
 pub struct CommandList {
-    pub folder : Option<String>, 
+    pub folder: Option<String>,
     #[arg(short, long)]
     pub flat: bool,
-    #[arg(short='t', long="type", id="TYPE")]
+    #[arg(short = 't', long = "type", id = "TYPE")]
     pub env_type: Option<EnvironmentType>,
     #[arg(short, long)]
     pub max_depth: Option<u32>,
@@ -19,15 +19,16 @@ pub struct CommandList {
 impl CommandList {
     pub fn execute(mut self, root: &Path) {
         self.env_type = self.env_type.or(Some(EnvironmentType::Project));
-    
-        let root = self.folder
+
+        let root = self
+            .folder
             .clone()
             .and_then(|f| mapper::find_environment(root, &f))
             .map(|e| e.source)
             .unwrap_or(root.to_path_buf());
-    
+
         let enviroments = mapper::map_directory(&root);
-        
+
         if self.flat {
             self.print_flat(enviroments, 0);
         } else {
@@ -39,14 +40,14 @@ impl CommandList {
         return (self.max_depth.is_none() || self.max_depth.unwrap() > depth)
             && ctype as u8 <= self.env_type.unwrap() as u8;
     }
-    
+
     fn print_tree(self, root: PathBuf, enviroments: Vec<Environment>) {
         let name = root
             .file_name()
             .and_then(|n| n.to_str())
             .unwrap_or("<root>")
             .to_string();
-    
+
         let mut tree_builder = ptree::TreeBuilder::new(name);
         for child in enviroments {
             self.build_tree(child, 0, &mut tree_builder);
@@ -54,7 +55,7 @@ impl CommandList {
         let tree = tree_builder.build();
         let _ = print_tree(&tree);
     }
-    
+
     fn build_tree(&self, env: Environment, depth: u32, tree_builder: &mut TreeBuilder) {
         if self.should_print(&env, depth) {
             let name = if env.details.enviroment_type() == EnvironmentType::SubProject {
@@ -69,7 +70,7 @@ impl CommandList {
             tree_builder.end_child();
         }
     }
-    
+
     fn print_flat(&self, environments: Vec<Environment>, depth: u32) {
         for env in environments {
             if self.should_print(&env, depth) {

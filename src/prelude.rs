@@ -1,9 +1,9 @@
-pub use std::path::{ PathBuf, Path};
 pub(crate) use crate::{
-	metadata::Metadata,
-    enviroment::{
-		Environment, 
-		EnvironmentDetails
-	},
-    EnvironmentType,
+    environment::{Environment, EnvironmentDetails},
+    environment_type::EnvironmentType,
+    metadata::Metadata,
+};
+pub use std::{
+    collections::HashMap,
+    path::{Path, PathBuf},
 };

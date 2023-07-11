@@ -40,7 +40,7 @@ pub fn get_meta(path: &Path) -> Option<Metadata> {
                         .map(|folder| Metadata {
                             name: folder.name,
                             path: Some(PathBuf::from(folder.path)),
-                            environment_type: Some(EnvironmentType::SubProject), 
+                            environment_type: Some(EnvironmentType::SubProject),
                             ..Default::default()
                         })
                         .collect(),
