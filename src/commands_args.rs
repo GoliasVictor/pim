@@ -2,7 +2,7 @@ use crate::EnvironmentType;
 use clap::Subcommand;
 
 #[derive(Debug, Subcommand)]
-pub enum Commands {
+pub enum CommandsArgs {
     #[command(arg_required_else_help = true)]
     Open { project: String },
     #[command(arg_required_else_help = true)]
@@ -11,6 +11,7 @@ pub enum Commands {
     Dir { project: String },
 
     List {
+        folder : Option<String>, 
         #[arg(short, long)]
         flat: bool,
         #[arg(short, long)]

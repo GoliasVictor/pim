@@ -16,6 +16,17 @@ pub enum EnvironmentDetails {
     },
 }
 
+impl EnvironmentDetails {
+    pub fn enviroment_type(&self) -> EnvironmentType{
+        return match self { 
+            EnvironmentDetails::Folder => EnvironmentType::Folder,
+            EnvironmentDetails::Project {..} => EnvironmentType::Project,
+            EnvironmentDetails::SubProject {..} => EnvironmentType::SubProject  
+        };
+        
+    }
+}
+
 #[derive(Debug)]
 pub struct Environment {
     pub name: String,
