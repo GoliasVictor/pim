@@ -37,10 +37,11 @@ fn main() {
         CommandGlobal::Run(command) => {
             command.execute(&root);
         }
-        CommandGlobal::Dir { project } => {
-            if let Some(env) = mapper::find_environment(&root, &project) {
-                println!("{}", env.source.display());
-            }
+        CommandGlobal::Dir(command)=> {
+            command.execute(&root)
+        },
+        CommandGlobal::Open(command)=>{
+            command.execute(&root)
         }
         _ => (),
     }
