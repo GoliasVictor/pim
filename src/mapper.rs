@@ -45,6 +45,7 @@ pub fn map_directory(path : &Path) -> Vec<Environment> {
 			}
 		}
 	}
+	enviroments.sort_by(|a,b| a.name.cmp(&b.name));
 	return enviroments;
 }
 

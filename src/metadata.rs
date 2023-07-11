@@ -3,7 +3,7 @@ use serde::{Serialize, Deserialize};
 use crate::EnvironmentType;
 
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Default)]
 pub struct Metadata {
 	#[serde(alias="type")]
 	pub environment_type : Option<EnvironmentType>,
@@ -19,5 +19,3 @@ pub struct Metadata {
 	#[serde(skip)]
 	pub source : PathBuf,
 }
-
-

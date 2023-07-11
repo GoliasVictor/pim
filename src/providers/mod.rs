@@ -1,14 +1,12 @@
-use std::path::{ Path};
+use std::path::Path;
 use crate::metadata::Metadata;
 mod dotmeta_provider;
-use dotmeta_provider::DotMetaProvider;
+mod vscode_provider;
 
 
 
 pub fn get_meta(path : &Path) -> Option<Metadata> {
-	if let Some(meta) = DotMetaProvider::get_meta(path) {
-		return Some(meta)
-	}
-	return None
+	return dotmeta_provider::get_meta(path)
+		.or(vscode_provider::get_meta(path));
 }
 
