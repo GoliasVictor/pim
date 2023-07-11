@@ -43,6 +43,5 @@ fn main() {
         CommandGlobal::Open(command)=>{
             command.execute(&root)
         }
-        _ => (),
     }
 }

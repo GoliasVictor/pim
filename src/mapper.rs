@@ -80,3 +80,21 @@ pub fn find_environment(path: &Path, name: &str) -> Option<Environment> {
 
     return None;
 }
+
+pub fn find_parent_environment(path: &PathBuf) -> Option<Environment> {
+    let mut path = path.clone();
+    loop {
+        if let Some(mut meta) = providers::get_meta(&path){
+            meta.source = path.clone();
+            meta.name = name_else_filename(meta.name.clone(), &path);
+            if let Some(env) =  Environment::from_metadata(meta).ok() {
+                return Some(env);
+            }
+        };
+        if !path.pop(){
+            return None;
+        };
+    }
+
+
+}
