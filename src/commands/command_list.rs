@@ -5,6 +5,7 @@ use ptree;
 use ptree::{print_tree, TreeBuilder};
 
 #[derive(Debug, Args, Clone)]
+#[command(aliases=["ls", "l"])]
 /// List projects
 pub struct CommandList {
     pub folder: Option<String>,

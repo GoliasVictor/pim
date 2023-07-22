@@ -20,12 +20,12 @@ pub enum Commands {
 
 #[derive(Args, Debug)]
 pub struct GlobalArgs {
-    #[arg(short, long, global = true)]
+    #[arg(short, long, env("DEV_DIR"), global = true)]
     pub root: Option<PathBuf>,
 }
 
 #[derive(Parser)]
-#[command(name = "pm", id="pm")]
+#[command(name = "pm", id="pm",  infer_subcommands=true)]
 #[command(author, version, about, long_about = None)]
 pub struct Cli {
     #[command(subcommand)]
@@ -36,11 +36,7 @@ pub struct Cli {
 
 impl Cli {
     pub fn execute(self) {
-        let root = self
-            .global
-            .root
-            .or(env::var("DEV_DIR").map(|p| PathBuf::from(&p)).ok())
-            .expect("root and develoonebt dir is undefined");
+        let root = self.global.root.expect("root dir is undefined");
         match self.command {
             Commands::List(command) => {
                 command.execute(&root);

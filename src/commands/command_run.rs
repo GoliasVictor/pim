@@ -10,7 +10,6 @@ use crate::{
 
 /// Run a script
 #[derive(Debug, Args, Clone)]
-#[command(alias="r")]
 pub struct CommandRun {
     /// Name of script
     script: Option<String>,
