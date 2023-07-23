@@ -1,7 +1,7 @@
 use std::process;
 
 use tabled::{settings::Style, builder::Builder};
-use clap::{Args, command};
+use clap::Args;
 
 use crate::{
     mapper::{find_environment, find_parent_environment},

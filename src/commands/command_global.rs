@@ -1,7 +1,7 @@
 use crate::commands::*;
 use clap::{command, Args, Parser};
 use clap::{CommandFactory, Subcommand};
-use std::{env, path::PathBuf};
+use std::path::PathBuf;
 
 #[derive(Subcommand)]
 
@@ -10,6 +10,7 @@ pub enum Commands {
     Dir(CommandDir),
     List(CommandList),
     Run(CommandRun),
+    New(CommandNew),
     /// Generate shell completions
     Completions {
         /// The shell to generate the completions for
@@ -46,6 +47,7 @@ impl Cli {
             }
             Commands::Dir(command) => command.execute(&root),
             Commands::Open(command) => command.execute(&root),
+            Commands::New(command) => command.execute(),
             Commands::Completions { shell } => {
                 shell.generate(&mut Cli::command(), &mut std::io::stdout());
             }

@@ -13,7 +13,7 @@ fn name_else_filename(opname: Option<String>, path: &Path) -> Option<String> {
         .and_then(|s| s.to_str())
         .map(|s| s.to_string());
 }
-fn get_meta(path: &Path) -> Option<Metadata> {
+pub fn get_meta(path: &Path) -> Option<Metadata> {
     let mut op =  dotmeta_provider::get_meta(path).or(vscode_provider::get_meta(path));
     if let Some(ref mut meta) =  op {
         meta.source = path.to_path_buf();
