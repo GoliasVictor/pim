@@ -35,9 +35,9 @@ pub struct Environment {
 }
 
 impl Environment {
-    pub fn from_metadata(meta: Metadata) -> Result<Self, i8> {
+    pub fn from_metadata(meta: Metadata) -> Result<Self> {
         return Ok(Self {
-            name: meta.name.ok_or(0)?,
+            name: meta.name.ok_or(anyhow!("name undefined"))?,
             description: meta.description,
             source: meta.source,
             details: if let Some(environment_type) = meta.environment_type {
@@ -50,7 +50,7 @@ impl Environment {
                         scripts: meta.scripts.unwrap_or(HashMap::new()),
                     },
                     EnvironmentType::SubProject => EnvironmentDetails::SubProject {
-                        path: meta.path.ok_or(0)?,
+                        path: meta.path.ok_or(anyhow!("undefined path of subproject"))?,
                     },
                 }
             } else {

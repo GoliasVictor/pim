@@ -18,7 +18,7 @@ pub struct CommandList {
 }
 
 impl CommandList {
-    pub fn execute(mut self, root: &Path) {
+    pub fn execute(mut self, root: &Path) -> Result<()> {
         self.env_type = self.env_type.or(Some(EnvironmentType::Project));
 
         let root = self
@@ -28,13 +28,14 @@ impl CommandList {
             .map(|e| e.source)
             .unwrap_or(root.to_path_buf());
 
-        let enviroments = mapper::map_directory(&root);
+        let enviroments = mapper::map_directory(&root).context("fails to find environments")?;
 
         if self.flat {
             self.print_flat(enviroments, 0);
         } else {
             self.print_tree(root, enviroments);
         }
+        Ok(())
     }
     fn should_print(&self, env: &Environment, depth: u32) -> bool {
         let ctype = env.details.enviroment_type();

@@ -8,7 +8,8 @@ mod providers;
 
 use clap::Parser;
 use commands::*;
+use prelude::*;
 
-fn main() {
-    Cli::parse().execute();
+fn main() -> Result<()>{
+    Cli::parse().execute()
 }

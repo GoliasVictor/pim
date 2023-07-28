@@ -4,7 +4,7 @@ use std::{
     process,
 };
 
-use crate::{mapper::find_environment, prelude::*, providers};
+use crate::{prelude::*, providers};
 use clap::Args;
 use directories::ProjectDirs;
 use serde::Deserialize;
@@ -26,41 +26,40 @@ pub struct CommandNew {
 }
 
 impl CommandNew {
-    pub fn execute(self) {
-        if let Some(proj_dirs) = ProjectDirs::from("", "GoliasVictor", "pm") {
-            let config_dir = proj_dirs.config_dir();
-            let templates_dir = config_dir.join("templates");
-            if !templates_dir.exists() {
-                panic!("Template directory not exists");
-            }
+    pub fn execute(self) -> Result<()> {
+        let Some(proj_dirs) = ProjectDirs::from("", "GoliasVictor", "pm") else {
+			return Ok(());
+		};
+        let config_dir = proj_dirs.config_dir();
+        let templates_dir = config_dir.join("templates");
+        if !templates_dir.exists() {
+            return Err(anyhow!("Template directory not exists"));
+        }
 
-            let template_path = templates_dir.join(self.template.unwrap_or("default".to_string()));
-            if !template_path.is_file() {
-                panic!("Template not exists ");
-            }
+        let template_path = templates_dir.join(self.template.unwrap_or("default".to_string()));
+        if !template_path.is_file() {
+            return Err(anyhow!("Template not exists"));
+        }
 
-            let template = File::open(template_path)
-                .or(Err("Could not open template"))
-                .and_then(|file| {
-                    serde_yaml::from_reader::<File, Template>(file).or(Err("invalid template"))
-                })
-                .unwrap();
-            let argv = shlex::split(&template.command).unwrap();
-            let dir = self.path.or_else(|| current_dir().ok()).unwrap();
-            if !dir.exists() {
-                fs::create_dir_all(&dir).expect("Could not create directory");
-            }
-            let _ = process::Command::new(&argv[0])
-                .args(&argv[1..])
-                .current_dir(&dir)
-                .status();
+        let template_file = File::open(template_path).context("could not open template")?;
+        let template =
+            serde_yaml::from_reader::<File, Template>(template_file).context("invalid template")?;
+        let argv = shlex::split(&template.command).unwrap();
+        let dir = self.path.or_else(|| current_dir().ok()).unwrap();
+        if !dir.exists() {
+            fs::create_dir_all(&dir).context("could not create directory")?;
+        }
+        process::Command::new(&argv[0])
+            .args(&argv[1..])
+            .current_dir(&dir)
+            .status()
+            .context(format!("failed to execute comand:{0}", template.command))?;
 
-            let meta_path = dir.join(".meta");
-            if !meta_path.exists() {
-                if let Ok(file) = File::create(meta_path) {
-                    let _ = serde_yaml::to_writer(file, &providers::get_meta(&dir));
-                }
-            }
-        };
+        let meta_path = dir.join(".meta");
+        if !meta_path.exists() {
+            let file = File::create(meta_path)?;
+            serde_yaml::to_writer(file, &providers::get_meta(&dir)?)?;
+        }
+        return Ok(());
     }
 }

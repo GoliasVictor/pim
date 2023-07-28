@@ -13,18 +13,20 @@ pub struct CommandOpen {
 }
 
 impl CommandOpen {
-	pub fn execute(self, root : &Path){
+	pub fn execute(self, root : &Path) -> Result<()> {
 		if let Some(env) = find_environment(root, &self.project){
-			match env.details {
-				EnvironmentDetails::Folder => eprintln!("the path is a folder"),
+			return match env.details {
+				EnvironmentDetails::Folder => Err(anyhow!("the environment is a folder")),
 				EnvironmentDetails::Project{ open_command, ..} => {
 					let open_command = open_command.unwrap_or_else(||format!("code {}", env.source.display()));
-					let argv = shlex::split(&open_command).unwrap();
-					process::Command::new(&argv[0]).args(&argv[1..]).current_dir(env.source).spawn().expect("falha ao executar");
+					println!("running: {open_command}");
+					let argv = shlex::split(&open_command).context("invalid command")?;
+					process::Command::new(&argv[0]).args(&argv[1..]).current_dir(env.source).spawn()?;
+					Ok(())
 				}
-				
-				EnvironmentDetails::SubProject { .. } => eprintln!("the path is a subproject"),
+				EnvironmentDetails::SubProject { .. } => Err(anyhow!("the path is a subproject")),
 			}
 		}
+		Err(anyhow!("environment not found"))
 	}
 }
