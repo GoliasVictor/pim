@@ -23,7 +23,7 @@ pub struct CommandRun {
 }
 
 impl CommandRun {
-    pub fn execute(self, root: &Path) {
+    pub fn execute(self, root: &Path) -> Result<()>{
         let env = self
             .project
 			.clone()
@@ -31,20 +31,17 @@ impl CommandRun {
                 || find_parent_environment(&std::env::current_dir().expect("Erro")),
                 |name| find_environment(root, &name),
             )
-            .expect("error: project not found");
-		if ! matches!(&env.details, EnvironmentDetails::Project { .. }){
-			panic!("error: environment is not a project")
-		};
+            .context("project not found")?;
 
         if self.script.is_some() {
             self.run_script(env);
         } else {
 			self.print_scripts(env)
         }
+        return Ok(());
     }
     pub fn run_script(self, env: Environment) {
-        let EnvironmentDetails::Project { scripts, .. }  = env.details else { unreachable!() };
-        if let Some(script) = scripts.get(&self.script.unwrap()) {
+        if let Some(script) = env.scripts.get(&self.script.unwrap()) {
             let mut argv = shlex::split(&script).unwrap();
             argv.extend(self.parameters);
             let _ = process::Command::new(&argv[0])
@@ -55,15 +52,14 @@ impl CommandRun {
             eprintln!("error: script not found");
         } 
     }
-	pub fn print_scripts(self, env: Environment) {
-        let EnvironmentDetails::Project { scripts, .. }  = env.details else { unreachable!() };
-		if scripts.is_empty() {
+	pub fn print_scripts(self, env: Environment) { 
+		if env.scripts.is_empty() {
             println!("project has no scripts")
         }
         else {
             let mut builder = Builder::default();
             builder.set_header(vec!["Name","Script"]);
-            for (k,v) in scripts {
+            for (k,v) in env.scripts {
                 builder.push_record([k,v]);
             } 
             let table = builder.build()

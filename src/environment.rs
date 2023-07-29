@@ -7,7 +7,6 @@ pub enum EnvironmentDetails {
         languages: Vec<String>,
         open_command: Option<String>,
         init_command: Option<String>,
-        scripts: HashMap<String, String>,
     },
     SubProject {
         path: PathBuf,
@@ -32,6 +31,7 @@ pub struct Environment {
     pub source: PathBuf,
     pub children: Vec<Environment>,
     pub details: EnvironmentDetails,
+    pub scripts: HashMap<String, String>,
 }
 
 impl Environment {
@@ -40,6 +40,7 @@ impl Environment {
             name: meta.name.ok_or(anyhow!("name undefined"))?,
             description: meta.description,
             source: meta.source,
+            scripts: meta.scripts.unwrap_or(HashMap::new()),
             details: if let Some(environment_type) = meta.environment_type {
                 match environment_type {
                     EnvironmentType::Folder => EnvironmentDetails::Folder,
@@ -47,7 +48,6 @@ impl Environment {
                         languages: meta.languages.unwrap_or(vec![]),
                         open_command: meta.open_command,
                         init_command: meta.init_command,
-                        scripts: meta.scripts.unwrap_or(HashMap::new()),
                     },
                     EnvironmentType::SubProject => EnvironmentDetails::SubProject {
                         path: meta.path.ok_or(anyhow!("undefined path of subproject"))?,
@@ -55,10 +55,9 @@ impl Environment {
                 }
             } else {
                 EnvironmentDetails::Project {
-                    languages: vec![],
-                    open_command: None,
-                    init_command: None,
-                    scripts: HashMap::new(),
+                    languages: meta.languages.unwrap_or(vec![]),
+                    open_command: meta.open_command,
+                    init_command: meta.init_command,
                 }
             },
             children: meta.children.map_or(vec![], |sps| {

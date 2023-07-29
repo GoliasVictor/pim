@@ -40,7 +40,7 @@ impl Cli {
         let root = self.global.root.context("root of dev dir is undefined")?;
         match self.command {
             Commands::List(command) => command.execute(&root)?,
-            Commands::Run(command) => command.execute(&root),
+            Commands::Run(command) => command.execute(&root)?,
             Commands::Dir(command) => command.execute(&root),
             Commands::Open(command) => command.execute(&root)?,
             Commands::New(command) => command.execute()?,
