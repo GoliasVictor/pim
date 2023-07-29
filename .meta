@@ -1,1 +1,6 @@
 type: project
+scripts:
+  release: | 
+    cargo build --release
+    cp ./target/release/project_manager ~/MyApps/bin/pm -f
+  test: echo oi

@@ -1,5 +1,5 @@
 use crate::prelude::*;
-use std::{fs::File, process, str};
+use std::{process, str};
 
 pub fn get_meta(path: &Path) -> Result<Metadata> {
     let output = process::Command::new("git")

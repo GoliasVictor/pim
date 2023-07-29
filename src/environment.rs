@@ -31,6 +31,7 @@ pub struct Environment {
     pub source: PathBuf,
     pub children: Vec<Environment>,
     pub details: EnvironmentDetails,
+    pub script_interpreter: Option<String>,
     pub scripts: HashMap<String, String>,
 }
 
@@ -40,6 +41,7 @@ impl Environment {
             name: meta.name.ok_or(anyhow!("name undefined"))?,
             description: meta.description,
             source: meta.source,
+            script_interpreter: meta.script_interpreter,
             scripts: meta.scripts.unwrap_or(HashMap::new()),
             details: if let Some(environment_type) = meta.environment_type {
                 match environment_type {

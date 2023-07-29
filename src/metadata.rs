@@ -20,6 +20,8 @@ pub struct Metadata {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Metadata>>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub script_interpreter: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub scripts: Option<HashMap<String, String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub path: Option<PathBuf>,
