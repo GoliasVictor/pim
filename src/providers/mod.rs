@@ -1,5 +1,6 @@
 use crate::prelude::*;
 mod dotmeta_provider;
+mod git_provider;
 mod vscode_provider;
 
 fn name_else_filename(opname: Option<String>, path: &Path) -> Option<String> {
@@ -14,7 +15,9 @@ fn name_else_filename(opname: Option<String>, path: &Path) -> Option<String> {
         .map(|s| s.to_string());
 }
 pub fn get_meta(path: &Path) -> Result<Metadata> {
-    let mut metadata = dotmeta_provider::get_meta(path).or(vscode_provider::get_meta(path))?;
+    let mut metadata = dotmeta_provider::get_meta(path)
+        .or_else(|_| vscode_provider::get_meta(path))
+        .or_else(|_| git_provider::get_meta(path))?;
     metadata.source = path.to_path_buf();
     metadata.name = name_else_filename(metadata.name.clone(), &path);
     if let Some(EnvironmentType::Project) = metadata.environment_type {
