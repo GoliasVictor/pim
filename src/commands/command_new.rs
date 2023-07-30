@@ -1,10 +1,9 @@
 use std::{
     env::current_dir,
-    fs::{self, File},
-    process,
+    fs::{self, File}
 };
 
-use crate::{prelude::*, providers};
+use crate::{prelude::*, providers, terminal::get_process};
 use clap::Args;
 use directories::ProjectDirs;
 use serde::Deserialize;
@@ -44,14 +43,11 @@ impl CommandNew {
         let template_file = File::open(template_path).context("could not open template")?;
         let template =
             serde_yaml::from_reader::<File, Template>(template_file).context("invalid template")?;
-        let argv = shlex::split(&template.command).unwrap();
         let dir = self.path.or_else(|| current_dir().ok()).unwrap();
         if !dir.exists() {
             fs::create_dir_all(&dir).context("could not create directory")?;
         }
-        process::Command::new(&argv[0])
-            .args(&argv[1..])
-            .current_dir(&dir)
+        get_process(&template.command, &dir)?
             .status()
             .context(format!("failed to execute comand:{0}", template.command))?;
 

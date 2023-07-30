@@ -12,19 +12,27 @@ pub struct Metadata {
     pub description: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub languages: Option<Vec<String>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub open_command: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub init_command: Option<String>,
     #[serde(alias = "sub_projects")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Metadata>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub script_interpreter: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub scripts: Option<HashMap<String, String>>,
+    pub scripts: Option<HashMap<String, MetadataScript>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub path: Option<PathBuf>,
     #[serde(skip)]
     pub source: PathBuf,
+}
+
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(untagged)]
+pub enum MetadataScript{
+    Struct {
+        interpreter: Option<String>,
+        script: String,
+        directory: Option<PathBuf>,
+    },
+    Scalar(String)
 }

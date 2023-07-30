@@ -5,6 +5,7 @@ mod mapper;
 mod metadata;
 mod prelude;
 mod providers;
+mod terminal;
 
 use clap::Parser;
 use commands::*;
