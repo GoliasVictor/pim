@@ -1,5 +1,5 @@
 use std::{env, process::Command};
-use crate::prelude::*;
+use crate::{prelude::*, metadata::MetadataScript};
 
 #[derive(Debug, Clone)]
 pub struct Script {
@@ -9,6 +9,13 @@ pub struct Script {
 }
 
 impl Script {
+    pub fn to_metadata_script(self) -> MetadataScript {
+        MetadataScript::Struct { interpreter: 
+            Some(self.interpreter), 
+            script: self.value, 
+            directory: Some(self.directory) 
+        }
+    }
     pub fn to_process(&self) -> Result<Command> {
         let mut command = get_process(&self.interpreter, &self.directory)?;
         command.arg(&self.value);

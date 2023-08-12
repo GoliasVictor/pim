@@ -11,6 +11,7 @@ pub enum Commands {
     List(CommandList),
     Run(CommandRun),
     New(CommandNew),
+    Info(CommandInfo),
     /// Generate shell completions
     Completions {
         /// The shell to generate the completions for
@@ -44,6 +45,7 @@ impl Cli {
             Commands::Dir(command) => command.execute(&root),
             Commands::Open(command) => command.execute(&root)?,
             Commands::New(command) => command.execute()?,
+            Commands::Info(command)=> command.execute(&root)?,
             Commands::Completions { shell } => {
                 shell.generate(&mut Cli::command(), &mut std::io::stdout());
             }

@@ -1,5 +1,5 @@
 use crate::{
-    metadata::MetadataScript::{Scalar, Struct, self},
+    metadata::MetadataScript::{self, Scalar, Struct},
     prelude::*,
     terminal::{default_shell_interpreter, Script},
 };
@@ -69,6 +69,36 @@ impl Environment {
         });
     }
 
+    pub fn to_metadata(self) -> Metadata {
+        let environment_type = Some(self.details.enviroment_type());
+        let (path, languages) = match self.details {
+            EnvironmentDetails::Project { languages } => (None, Some(languages)),
+            EnvironmentDetails::SubProject { path } => (Some(path), None),
+            EnvironmentDetails::Folder => (None, None),
+        };
+        Metadata {
+            environment_type,
+            languages,
+            path,
+            name: Some(self.name),
+            description: self.description,
+            source: self.source,
+            script_interpreter: self.script_interpreter,
+            children: Some(
+                self.children
+                    .into_iter()
+                    .map(|env| env.to_metadata())
+                    .collect(),
+            ),
+            scripts: Some(
+                self.scripts
+                    .into_iter()
+                    .map(|(str, script)| (str, script.to_metadata_script()))
+                    .collect(),
+            ),
+        }
+    }
+
     pub fn open(self: Environment) -> Result<()> {
         match self.details {
             EnvironmentDetails::Folder => Err(anyhow!("the environment is a folder"))?,
@@ -92,8 +122,7 @@ impl Environment {
             .get(name_script)
             .context("script not found")?
             .to_process()?
-            .status()
-            .context("failed to execute script")?;
+            .status()?;
         Ok(())
     }
 }
@@ -110,7 +139,9 @@ fn metadatascript_to_script(v: MetadataScript, meta: &Metadata) -> Script {
                 .clone()
                 .or(meta.script_interpreter.clone())
                 .unwrap_or_else(default_shell_interpreter),
-            directory: meta.source.join(directory.clone().unwrap_or(PathBuf::from("."))),
+            directory: meta
+                .source
+                .join(directory.clone().unwrap_or(PathBuf::from("."))),
         }
         .clone(),
         Scalar(value) => Script {
