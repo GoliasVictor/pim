@@ -1,4 +1,4 @@
-use clap::{command, Args, ValueEnum};
+use clap::{command, Args, ValueEnum, Subcommand};
 use serde::{Deserialize, Serialize};
 use std::fs;
 
@@ -11,24 +11,32 @@ use crate::{
 #[derive(Debug, Args, Clone)]
 #[command(arg_required_else_help = true)]
 pub struct CommandInfo {
-    property: MetadataProperty,
-    #[arg(short, long)]
+    #[command(subcommand)]
+    command: InfoSubcommands,
+    #[arg(short, long, global=true)]
     environment: Option<String>,
-    #[arg(short, long)]
+    #[arg(short, long, global=true)]
     path: Option<PathBuf>,
 }
 
+#[derive(Subcommand, Debug, Clone)]
+pub enum InfoSubcommands {
+    IsEnv,
+    Property {
+        property : MetadataProperty
+    },
+}
+
+
 #[derive(ValueEnum, Copy, Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-#[allow(non_camel_case_types)]
 pub enum MetadataProperty {
-    environment_type,
-    languages,
-    path,
-    description,
-    script_interpreter,
-    name,
-    directory,
+    EnvironmentType,
+    Languages,
+    Path,
+    Description,
+    ScriptInterpreter,
+    Name,
+    Directory,
 }
 impl MetadataProperty {
     pub fn check_undefined<T, E, F>(&self, value: T) -> Result<E>
@@ -39,20 +47,20 @@ impl MetadataProperty {
     }
     pub fn get_data(&self, metadata: &Metadata) -> Result<String> {
         Ok(match self {
-            Self::environment_type => {
-                format!("{:?}", self.check_undefined(metadata.environment_type)?)
+            Self::EnvironmentType => {
+                self.check_undefined(metadata.environment_type)?.to_string()
             }
-            Self::languages => self.check_undefined(metadata.languages.clone())?.join(" "),
-            Self::path => self
+            Self::Languages => self.check_undefined(metadata.languages.clone())?.join(" "),
+            Self::Path => self
                 .check_undefined(metadata.path.clone())?
                 .to_string_lossy()
                 .to_string(),
-            Self::directory => metadata.source.to_string_lossy().to_string(),
-            Self::description => self.check_undefined(metadata.description.clone())?,
-            Self::script_interpreter => {
+            Self::Directory => metadata.source.to_string_lossy().to_string(),
+            Self::Description => self.check_undefined(metadata.description.clone())?,
+            Self::ScriptInterpreter => {
                 self.check_undefined(metadata.script_interpreter.clone())?
             }
-            Self::name => self.check_undefined(metadata.name.clone())?,
+            Self::Name => self.check_undefined(metadata.name.clone())?,
         })
     }
 }
@@ -60,16 +68,23 @@ impl MetadataProperty {
 impl CommandInfo {
     pub fn execute(self, root: &Path) -> Result<()> {
         let env = if let Some(environment) = self.environment {
-            find_environment(root, &environment).context("environment not found")?
+            find_environment(root, &environment).context("environment not found")
         } else if let Some(mut path) = self.path {
             path = fs::canonicalize(path).context("invalid path")?;
-            find_parent_environment(&path).context("environment not found")?
+            find_parent_environment(&path).context("environment not found")
         } else {
             let path = std::env::current_dir().context("failed to get current directory")?;
-            find_parent_environment(&path).context("actual directory isn't a environment")?
+            find_parent_environment(&path).context("actual directory isn't a environment")
         };
-
-        println!("{}", self.property.get_data(&env.to_metadata())?);
+        match self.command {
+            InfoSubcommands::IsEnv => {
+                println!("{}", env.is_ok());
+            },
+            InfoSubcommands::Property { property } => {
+                println!("{}", property.get_data(&env?.to_metadata())?);
+            },
+        }
+        
         Ok(())
     }
 }

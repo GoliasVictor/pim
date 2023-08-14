@@ -27,7 +27,7 @@ pub struct GlobalArgs {
 }
 
 #[derive(Parser)]
-#[command(name = "pm", id = "pm", infer_subcommands = true)]
+#[command(name = "pm", id = "pm", infer_subcommands = true, infer_long_args = true)]
 #[command(author, version, about, long_about = None)]
 pub struct Cli {
     #[command(subcommand)]
