@@ -11,8 +11,13 @@ pub struct CommandFind {
 
 	#[arg(short, long)]
 	language: Option<String>,
+
+	#[arg(short, long)]
+	categories: Option<String>,
+
     #[arg(short, long)]
     pub r#type: Option<EnvironmentType>,
+
     #[arg(short, long)]
     pub max_depth: Option<u32>,
 
@@ -44,6 +49,10 @@ impl CommandFind {
 			} else {
 				should = false;
 			}
+		}
+
+		if let Some(category) =  &self.categories{
+			should &=  env.categories.contains(&category.to_ascii_lowercase());		
 		}
 
 		return should;

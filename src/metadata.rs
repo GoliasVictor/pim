@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use crate::prelude::*;
 use serde::{Deserialize, Serialize};
 
@@ -6,21 +8,32 @@ pub struct Metadata {
     #[serde(alias = "type")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub environment_type: Option<EnvironmentType>,
+    
     #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
+    
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+    
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub languages: Option<Vec<String>>,
+    pub languages: Option<Vec<String>>,    
+    
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub categories: Option<HashSet<String>>,
+    
     #[serde(alias = "sub_projects")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<Metadata>>,
+    
     #[serde(skip_serializing_if = "Option::is_none")]
     pub script_interpreter: Option<String>,
+    
     #[serde(skip_serializing_if = "Option::is_none")]
     pub scripts: Option<HashMap<String, MetadataScript>>,
+    
     #[serde(skip_serializing_if = "Option::is_none")]
     pub path: Option<PathBuf>,
+    
     #[serde(skip)]
     pub source: PathBuf,
 }

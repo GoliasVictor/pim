@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use crate::{
     metadata::MetadataScript::{self, Scalar, Struct},
     prelude::*,
@@ -26,6 +28,7 @@ pub struct Environment {
     pub name: String,
     pub description: Option<String>,
     pub source: PathBuf,
+    pub categories: HashSet<String>,
     pub children: Vec<Environment>,
     pub details: EnvironmentDetails,
     pub script_interpreter: Option<String>,
@@ -46,6 +49,7 @@ impl Environment {
                 .into_iter()
                 .map(|(k, v)| (k, metadatascript_to_script(v, &meta)))
                 .collect(),
+            categories: meta.categories.unwrap_or(HashSet::default()),
             details: if let Some(environment_type) = meta.environment_type {
                 match environment_type {
                     EnvironmentType::Folder => EnvironmentDetails::Folder,
@@ -82,6 +86,7 @@ impl Environment {
             path,
             name: Some(self.name),
             description: self.description,
+            categories: Some(self.categories),
             source: self.source,
             script_interpreter: self.script_interpreter,
             children: Some(
