@@ -6,6 +6,7 @@ use clap::{CommandFactory, Subcommand};
 #[derive(Subcommand)]
 
 pub enum Commands {
+    Find(CommandFind),
     Open(CommandOpen),
     Dir(CommandDir),
     List(CommandList),
@@ -27,7 +28,12 @@ pub struct GlobalArgs {
 }
 
 #[derive(Parser)]
-#[command(name = "pm", id = "pm", infer_subcommands = true, infer_long_args = true)]
+#[command(
+    name = "pm",
+    id = "pm",
+    infer_subcommands = true,
+    infer_long_args = true
+)]
 #[command(author, version, about, long_about = None)]
 pub struct Cli {
     #[command(subcommand)]
@@ -40,12 +46,13 @@ impl Cli {
     pub fn execute(self) -> Result<()> {
         let root = self.global.root.context("root of dev dir is undefined")?;
         match self.command {
+            Commands::Find(command) => command.execute(&root)?,
             Commands::List(command) => command.execute(&root)?,
             Commands::Run(command) => command.execute(&root)?,
             Commands::Dir(command) => command.execute(&root),
             Commands::Open(command) => command.execute(&root)?,
             Commands::New(command) => command.execute()?,
-            Commands::Info(command)=> command.execute(&root)?,
+            Commands::Info(command) => command.execute(&root)?,
             Commands::Completions { shell } => {
                 shell.generate(&mut Cli::command(), &mut std::io::stdout());
             }

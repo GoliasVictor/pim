@@ -1,4 +1,5 @@
 type: project
+languages: [ rust ]
 scripts:
   release: | 
       cargo build --release 

@@ -17,6 +17,7 @@ pub struct CommandRun {
     project: Option<String>,
 
     /// Parameters added to the end of the script
+    #[arg(last=true)]
     parameters: Vec<String>,
 }
 
