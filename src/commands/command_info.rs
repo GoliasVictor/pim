@@ -50,7 +50,7 @@ impl MetadataProperty {
             Self::EnvironmentType => {
                 self.check_undefined(metadata.environment_type)?.to_string()
             }
-            Self::Languages => self.check_undefined(metadata.languages.clone())?.join(" "),
+            Self::Languages => self.check_undefined(metadata.languages.clone())?.into_iter().collect::<Vec<String>>().join(" "),
             Self::Path => self
                 .check_undefined(metadata.path.clone())?
                 .to_string_lossy()

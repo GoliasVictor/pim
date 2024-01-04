@@ -9,7 +9,7 @@ use crate::{
 #[derive(Debug)]
 pub enum EnvironmentDetails {
     Folder,
-    Project { languages: Vec<String> },
+    Project { languages: HashSet<String> },
     SubProject { path: PathBuf },
 }
 
@@ -54,7 +54,7 @@ impl Environment {
                 match environment_type {
                     EnvironmentType::Folder => EnvironmentDetails::Folder,
                     EnvironmentType::Project => EnvironmentDetails::Project {
-                        languages: meta.languages.unwrap_or(vec![]),
+                        languages: meta.languages.unwrap_or(HashSet::new()),
                     },
                     EnvironmentType::SubProject => EnvironmentDetails::SubProject {
                         path: meta.path.context("undefined path of subproject")?,
@@ -62,7 +62,7 @@ impl Environment {
                 }
             } else {
                 EnvironmentDetails::Project {
-                    languages: meta.languages.unwrap_or(vec![]),
+                    languages: meta.languages.unwrap_or(HashSet::new()),
                 }
             },
             children: meta.children.map_or(vec![], |sps| {

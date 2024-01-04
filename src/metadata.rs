@@ -16,7 +16,7 @@ pub struct Metadata {
     pub description: Option<String>,
     
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub languages: Option<Vec<String>>,    
+    pub languages: Option<HashSet<String>>,    
     
     #[serde(skip_serializing_if = "Option::is_none")]
     pub categories: Option<HashSet<String>>,
