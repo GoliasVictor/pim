@@ -15,11 +15,11 @@ pub enum EnvironmentDetails {
 
 impl EnvironmentDetails {
     pub fn enviroment_type(&self) -> EnvironmentType {
-        return match self {
+        match self {
             EnvironmentDetails::Folder => EnvironmentType::Folder,
             EnvironmentDetails::Project { .. } => EnvironmentType::Project,
             EnvironmentDetails::SubProject { .. } => EnvironmentType::SubProject,
-        };
+        }
     }
 }
 
@@ -37,7 +37,7 @@ pub struct Environment {
 
 impl Environment {
     pub fn from_metadata(meta: Metadata) -> Result<Self> {
-        return Ok(Self {
+        Ok(Self {
             name: meta.name.clone().ok_or(anyhow!("name undefined"))?,
             description: meta.description.clone(),
             source: meta.source.clone(),
@@ -70,10 +70,10 @@ impl Environment {
                     .filter_map(|m| Environment::from_metadata(m).ok())
                     .collect()
             }),
-        });
+        })
     }
 
-    pub fn to_metadata(self) -> Metadata {
+    pub fn into_metadata(self) -> Metadata {
         let environment_type = Some(self.details.enviroment_type());
         let (path, languages) = match self.details {
             EnvironmentDetails::Project { languages } => (None, Some(languages)),
@@ -92,13 +92,13 @@ impl Environment {
             children: Some(
                 self.children
                     .into_iter()
-                    .map(|env| env.to_metadata())
+                    .map(|env| env.into_metadata())
                     .collect(),
             ),
             scripts: Some(
                 self.scripts
                     .into_iter()
-                    .map(|(str, script)| (str, script.to_metadata_script()))
+                    .map(|(str, script)| (str, script.into_metadata_script()))
                     .collect(),
             ),
         }
@@ -139,19 +139,17 @@ fn metadatascript_to_script(v: MetadataScript, meta: &Metadata) -> Script {
             interpreter,
             directory,
         } => Script {
-            value: script.clone(),
+            value: script,
             interpreter: interpreter
-                .clone()
                 .or(meta.script_interpreter.clone())
                 .unwrap_or_else(default_shell_interpreter),
             directory: meta
                 .source
-                .join(directory.clone().unwrap_or(PathBuf::from("."))),
-        }
-        .clone(),
+                .join(directory.unwrap_or(PathBuf::from("."))),
+        },
         Scalar(value) => Script {
             interpreter: default_shell_interpreter(),
-            value: value.clone(),
+            value,
             directory: meta.source.clone(),
         },
     }

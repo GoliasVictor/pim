@@ -19,14 +19,14 @@ pub fn get_meta(path: &Path) -> Result<Metadata> {
         .or_else(|_| vscode_provider::get_meta(path))
         .or_else(|_| git_provider::get_meta(path))?;
     metadata.source = path.to_path_buf();
-    metadata.name = name_else_filename(metadata.name.clone(), &path);
+    metadata.name = name_else_filename(metadata.name.clone(), path);
     if let Some(EnvironmentType::Project) = metadata.environment_type {
         if let Some(children) = &mut metadata.children {
-            for child in children.into_iter() {
+            for child in children.iter_mut() {
                 if let Some(child_path) = child
                     .path
                     .as_ref()
-                    .and_then(|p| metadata.source.join(&p).canonicalize().ok())
+                    .and_then(|path| metadata.source.join(path).canonicalize().ok())
                 {
                     child.name = name_else_filename(child.name.clone(), &child_path);
                 }
@@ -34,10 +34,10 @@ pub fn get_meta(path: &Path) -> Result<Metadata> {
             }
         }
     }
-    return Ok(metadata);
+    Ok(metadata)
 }
 
 pub fn get_environment(path: &Path) -> Result<Environment> {
     let meta = get_meta(path)?;
-    return Environment::from_metadata(meta);
+    Environment::from_metadata(meta)
 }

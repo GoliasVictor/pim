@@ -56,6 +56,6 @@ impl CommandNew {
             let file = File::create(meta_path)?;
             serde_yaml::to_writer(file, &providers::get_meta(&dir)?)?;
         }
-        return Ok(());
+        Ok(())
     }
 }

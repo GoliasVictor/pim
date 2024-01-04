@@ -12,5 +12,5 @@ pub fn get_meta(path: &Path) -> Result<Metadata> {
 	if root != path { 
 		return Err(anyhow!("path is not a root of a git repository"));
 	}
-	return Ok(Metadata::default());
+	Ok(Metadata::default())
 }

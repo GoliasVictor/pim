@@ -12,6 +12,6 @@ pub struct CommandOpen {
 impl CommandOpen {
     pub fn execute(self, root: &Path) -> Result<()> {
         let env = find_environment(root, &self.project).context("environment not found")?;
-        return env.open();
+        env.open()
     }
 }

@@ -11,10 +11,10 @@ pub fn get_meta(path: &Path) -> Result<Metadata> {
     }
     let file = File::open(&meta_path)
         .with_context(|| format!("failed to open file {0}", meta_path.to_string_lossy()))?;
-    return serde_yaml::from_reader::<File, Metadata>(file).with_context(|| {
+    serde_yaml::from_reader::<File, Metadata>(file).with_context(|| {
         format!(
             "failed to deserialize the file {0}",
             meta_path.to_string_lossy()
         )
-    });
+    })
 }

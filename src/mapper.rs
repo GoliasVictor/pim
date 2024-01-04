@@ -22,7 +22,7 @@ pub fn map_directory(path: &Path) -> Result<Vec<Environment>> {
         }
     }
     enviroments.sort_by(|a, b| a.name.cmp(&b.name));
-    return Ok(enviroments);
+    Ok(enviroments)
 }
 
 pub fn find_environment(path: &Path, name: &str) -> Option<Environment> {
@@ -50,11 +50,11 @@ pub fn find_environment(path: &Path, name: &str) -> Option<Environment> {
         }
     }
 
-    return None;
+    None
 }
 
-pub fn find_parent_environment(path: &PathBuf) -> Option<Environment> {
-    let mut path = path.clone();
+pub fn find_parent_environment(path: &Path) -> Option<Environment> {
+    let mut path = path.to_path_buf();
     loop {
         if let Ok(env) = providers::get_environment(&path) {
             return Some(env);

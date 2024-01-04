@@ -25,7 +25,7 @@ pub struct CommandFind {
 
 impl CommandFind {
 	pub fn execute(self, root : &Path) -> Result<()>{
-        let environments = mapper::map_directory(&root).context("fails to find environments")?;
+        let environments = mapper::map_directory(root).context("fails to find environments")?;
 		self.print_flat(environments, 0);
 		Ok(())
 	}
@@ -55,7 +55,7 @@ impl CommandFind {
 			should &=  env.categories.contains(&category.to_ascii_lowercase());		
 		}
 
-		return should;
+		should
     }
 
 	fn print_flat(&self, environments: Vec<Environment>, depth: u32) {

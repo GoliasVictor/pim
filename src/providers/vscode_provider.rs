@@ -18,8 +18,7 @@ pub fn get_meta(path: &Path) -> Result<Metadata> {
     let entry = fs::read_dir(path)
         .context("failed to read directory")?
         .filter_map(Result::ok)
-        .filter(|d| d.path().extension() == Some(OsStr::new("code-workspace")))
-        .next()
+        .find(|d| d.path().extension() == Some(OsStr::new("code-workspace")))
         .context("directory has no .code-workspace file")?;
 
     let file = File::open(entry.path()).with_context(
@@ -48,5 +47,5 @@ pub fn get_meta(path: &Path) -> Result<Metadata> {
         ),
         ..Default::default()
     };
-    return Ok(metadata);
+    Ok(metadata)
 }

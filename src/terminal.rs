@@ -9,7 +9,7 @@ pub struct Script {
 }
 
 impl Script {
-    pub fn to_metadata_script(self) -> MetadataScript {
+    pub fn into_metadata_script(self) -> MetadataScript {
         MetadataScript::Struct { interpreter: 
             Some(self.interpreter), 
             script: self.value, 
@@ -30,11 +30,11 @@ impl Script {
     }
 }
 pub fn default_shell_interpreter() -> String {
-    return env::var("SHELL").unwrap_or("bash".to_owned()) + " -c";
+    env::var("SHELL").unwrap_or("bash".to_owned()) + " -c"
 }
 pub fn get_process(command_string: &str, dir: &Path) -> Result<Command> {
-    let argv = shlex::split(&command_string).context("invalid command")?;
+    let argv = shlex::split(command_string).context("invalid command")?;
     let mut command = Command::new(&argv[0]);
     command.args(&argv[1..]).current_dir(dir);
-    return Ok(command);
+    Ok(command)
 }

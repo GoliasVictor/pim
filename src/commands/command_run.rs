@@ -37,7 +37,7 @@ impl CommandRun {
         } else {
             self.print_scripts(env)
         }
-        return Ok(());
+        Ok(())
     }
 
     pub fn print_scripts(self, env: Environment) {

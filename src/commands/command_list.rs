@@ -4,7 +4,7 @@ use crate::mapper;
 use crate::prelude::*;
 use clap::Args;
 use clap::ValueEnum;
-use ptree;
+
 use ptree::{print_tree, TreeBuilder};
 use serde::Deserialize;
 use serde::Serialize;
@@ -13,8 +13,8 @@ use serde::Serialize;
 pub enum Style {
     Flat,
     Tree,
-    GroupByLanguage,
-    GroupByCategory,
+    ByLanguage,
+    ByCategory,
 }
 
 #[derive(Debug, Args, Clone)]
@@ -46,10 +46,10 @@ impl CommandList {
             Style::Flat => {
                 self.print_flat(environments, 0);
             }
-            Style::GroupByCategory => {
+            Style::ByCategory => {
                 self.print_by(environments,"without category".to_owned(), |env| env.categories.clone());
             },
-            Style::GroupByLanguage => {
+            Style::ByLanguage => {
                 self.print_by(environments,"undefined languages".to_owned(), |env| {
                     match &env.details {
                         EnvironmentDetails::Project { languages }=> languages.clone(),
@@ -65,8 +65,8 @@ impl CommandList {
     }
     fn should_print(&self, env: &Environment, depth: u32) -> bool {
         let ctype = env.details.enviroment_type();
-        return (self.max_depth.is_none() || self.max_depth.unwrap() > depth)
-            && ctype as u8 <= self.env_type.unwrap() as u8;
+        (self.max_depth.is_none() || self.max_depth.unwrap() > depth)
+            && ctype as u8 <= self.env_type.unwrap() as u8
     }
 
     fn print_tree(self, root: PathBuf, environments: Vec<Environment>) {
