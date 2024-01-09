@@ -2,34 +2,35 @@ use clap::{Args, command};
 
 use crate::{prelude::*, mapper};
 
+/// Find environments who match the filters  
 #[derive(Debug, Args, Clone)]
 #[command(arg_required_else_help = true)]
 pub struct CommandFind {
-
+	/// Part of the environment name
 	#[arg(short, long)]
-	name: Option<String>,
-
+	pub name: Option<String>,
+	/// Environment language 
 	#[arg(short, long)]
-	language: Option<String>,
-
+	pub language: Option<String>,
+	///  Environment category 
 	#[arg(short, long)]
-	categories: Option<String>,
-
+	pub categories: Option<String>,
+	/// Environment type
     #[arg(short, long)]
     pub r#type: Option<EnvironmentType>,
-
+	/// Maximum depth to find 
     #[arg(short, long)]
     pub max_depth: Option<u32>,
-
 }
 
 impl CommandFind {
+	/// Execute the command
 	pub fn execute(self, root : &Path) -> Result<()>{
         let environments = mapper::map_directory(root).context("fails to find environments")?;
 		self.print_flat(environments, 0);
 		Ok(())
 	}
-
+	/// Check whether to print based on filters
 	fn should_print(&self, env: &Environment, depth: u32) -> bool {
 		
 		let ctype = env.details.enviroment_type();

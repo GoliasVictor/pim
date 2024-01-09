@@ -11,9 +11,13 @@ use serde::Serialize;
 
 #[derive(ValueEnum, Copy, Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Style {
+    /// Print environment name line by line
     Flat,
+    /// Print environment in tree
     Tree,
+    /// Print environment of each language 
     ByLanguage,
+    /// Print environment of each category 
     ByCategory,
 }
 
@@ -21,16 +25,21 @@ pub enum Style {
 #[command(aliases=["ls", "l"])]
 /// List projects
 pub struct CommandList {
+    /// The folder to child environments 
     pub folder: Option<String>,
+    /// The style of output 
     #[arg(short, long, default_value = "tree")]
     pub style: Style,
+    /// Maximum environment type, subproject: print subproject, project and subproject, project: print subproject and project. folder: prints only folders.
     #[arg(short = 't', long = "type", id = "TYPE")]
     pub env_type: Option<EnvironmentType>,
+    /// Maximum folder depth to show
     #[arg(short, long)]
     pub max_depth: Option<u32>,
 }
 
 impl CommandList {
+    /// Execute the command
     pub fn execute(mut self, root: &Path) -> Result<()> {
         self.env_type = self.env_type.or(Some(EnvironmentType::Project));
 

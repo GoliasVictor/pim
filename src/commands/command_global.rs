@@ -5,6 +5,7 @@ use clap::{CommandFactory, Subcommand};
 
 #[derive(Subcommand)]
 
+#[allow(missing_docs)]
 pub enum Commands {
     Find(CommandFind),
     Open(CommandOpen),
@@ -13,20 +14,21 @@ pub enum Commands {
     Run(CommandRun),
     New(CommandNew),
     Info(CommandInfo),
-    /// Generate shell completions
     Completions {
         /// The shell to generate the completions for
         #[arg(value_enum)]
         shell: clap_complete_command::Shell,
     },
 }
-
+/// Global arguments 
 #[derive(Args, Debug)]
 pub struct GlobalArgs {
+    /// The root folder with all environments to map and run commands
     #[arg(short, long, env("DEV_DIR"), global = true)]
     pub root: Option<PathBuf>,
 }
 
+/// Project Manager 
 #[derive(Parser)]
 #[command(
     name = "pm",
@@ -36,13 +38,16 @@ pub struct GlobalArgs {
 )]
 #[command(author, version, about, long_about = None)]
 pub struct Cli {
+    /// The command to execute
     #[command(subcommand)]
     pub command: Commands,
+    /// Global arguments 
     #[command(flatten)]
     pub global: GlobalArgs,
 }
 
 impl Cli {
+    /// Execute the program
     pub fn execute(self) -> Result<()> {
         let root = self.global.root.context("root of dev dir is undefined")?;
         match self.command {

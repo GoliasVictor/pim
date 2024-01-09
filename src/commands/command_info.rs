@@ -7,22 +7,28 @@ use crate::{
     prelude::*,
 };
 
-/// Show the directory of project
+/// Get information about an environment 
 #[derive(Debug, Args, Clone)]
 #[command(arg_required_else_help = true)]
 pub struct CommandInfo {
+    /// Subcommand
     #[command(subcommand)]
-    command: InfoSubcommands,
+    pub command: InfoSubcommands,
+    /// Environment where the information will be obtained (if this and path are not specified, use the environment close to the root from the current folder)
     #[arg(short, long, global=true)]
-    environment: Option<String>,
+    pub environment: Option<String>,
+    /// Path to the environment  (if `--environment` is specified ignore, this will be ignored)
     #[arg(short, long, global=true)]
-    path: Option<PathBuf>,
+    pub path: Option<PathBuf>,
 }
 
 #[derive(Subcommand, Debug, Clone)]
 pub enum InfoSubcommands {
+    /// Check if the path is within an environment
     IsEnv,
+    /// get a property from the environment
     Property {
+        /// The property to get of the environment
         property : MetadataProperty
     },
 }
@@ -66,6 +72,7 @@ impl MetadataProperty {
 }
 
 impl CommandInfo {
+    /// Execute the command 
     pub fn execute(self, root: &Path) -> Result<()> {
         let env = if let Some(environment) = self.environment {
             find_environment(root, &environment).context("environment not found")

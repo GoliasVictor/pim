@@ -12,9 +12,9 @@ pub struct CommandRun {
     /// Name of script
     script: Option<String>,
 
-    /// Project where is the script
+    /// Environmnet where is the script
     #[arg(short, long)]
-    project: Option<String>,
+    environmnet: Option<String>,
 
     /// Parameters added to the end of the script
     #[arg(last=true)]
@@ -22,15 +22,16 @@ pub struct CommandRun {
 }
 
 impl CommandRun {
+    /// Execute the command
     pub fn execute(self, root: &Path) -> Result<()> {
         let env = self
-            .project
+            .environmnet
             .clone()
             .map_or_else(
                 || find_parent_environment(&std::env::current_dir().expect("Erro")),
                 |name| find_environment(root, &name),
             )
-            .context("project not found")?;
+            .context("environmnet not found")?;
 
         if let Some(name_script) = self.script {
             env.run_script(&name_script)?;
@@ -40,9 +41,9 @@ impl CommandRun {
         Ok(())
     }
 
-    pub fn print_scripts(self, env: Environment) {
+    fn print_scripts(self, env: Environment) {
         if env.scripts.is_empty() {
-            println!("project has no scripts")
+            println!("environmnet has no scripts")
         } else {
             let mut builder = Builder::default();
             builder.set_header(vec!["Name", "Script"]);

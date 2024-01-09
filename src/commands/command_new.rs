@@ -18,13 +18,14 @@ struct Template {
 #[command()]
 pub struct CommandNew {
     /// template of environment
-    template: Option<String>,
+    pub template: Option<String>,
     /// Path to environment
     #[arg(short, long)]
-    path: Option<PathBuf>,
+    pub path: Option<PathBuf>,
 }
 
 impl CommandNew {
+    /// Execute the command
     pub fn execute(self) -> Result<()> {
         let Some(proj_dirs) = ProjectDirs::from("", "GoliasVictor", "pm") else {
 			return Ok(());
