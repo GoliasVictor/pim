@@ -3,7 +3,7 @@ use std::{
     fs::{self, File}
 };
 
-use crate::{prelude::*, providers, terminal::get_process};
+use crate::{prelude::*, providers, terminal::get_command};
 use clap::Args;
 use directories::ProjectDirs;
 use serde::Deserialize;
@@ -48,7 +48,7 @@ impl CommandNew {
         if !dir.exists() {
             fs::create_dir_all(&dir).context("could not create directory")?;
         }
-        get_process(&template.command, &dir)?
+        get_command(&template.command, &dir)?
             .status()
             .context(format!("failed to execute comand:{0}", template.command))?;
 

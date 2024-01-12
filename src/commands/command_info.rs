@@ -88,7 +88,7 @@ impl CommandInfo {
                 println!("{}", env.is_ok());
             },
             InfoSubcommands::Property { property } => {
-                println!("{}", property.get_data(&env?.into_metadata())?);
+                println!("{}", property.get_data(&Metadata::from(env?))?);
             },
         }
         

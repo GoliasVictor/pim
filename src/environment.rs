@@ -1,19 +1,30 @@
+//! Environment structs and related functions
 use std::collections::HashSet;
-
 use crate::{
     metadata::MetadataScript::{self, Scalar, Struct},
     prelude::*,
     terminal::{default_shell_interpreter, Script},
 };
 
+/// Environment details for each type
 #[derive(Debug)]
 pub enum EnvironmentDetails {
+    /// Folder: an environment that groups other environments
     Folder,
-    Project { languages: HashSet<String> },
-    SubProject { path: PathBuf },
+    /// Project: an environment that runs and has source code and can be used alone
+    Project {
+        /// The languages used in the project
+        languages: HashSet<String>,
+    },
+    /// Subproject: a part within a project, a module, a layer, a library, etc. an internal separation within a project
+    SubProject {
+        /// Relative path from the main project to the subproject folder
+        path: PathBuf,
+    },
 }
 
 impl EnvironmentDetails {
+    /// return the struct `EnvirnomentType` based of the details
     pub fn enviroment_type(&self) -> EnvironmentType {
         match self {
             EnvironmentDetails::Folder => EnvironmentType::Folder,
@@ -22,26 +33,34 @@ impl EnvironmentDetails {
         }
     }
 }
-
+/// Environment, a generalization of a folder where there is source code
+///
+/// It can either be something that just stores other environments within it (folder),
+/// or the entire source code of a project (project) and smaller parts of a project (subproject).
 #[derive(Debug)]
 pub struct Environment {
+    /// Environment name
     pub name: String,
+    /// Description of what is in this environment or what it is for or whatever is necessary to describe
     pub description: Option<String>,
+    /// Folder where the environment is
     pub source: PathBuf,
+    /// Environment categories
     pub categories: HashSet<String>,
+    /// Environments directly contained by the environment
     pub children: Vec<Environment>,
+    /// Environment details for the type of environment this environment is
     pub details: EnvironmentDetails,
+    /// Default script interpreter that will be used to execute the scripts
     pub script_interpreter: Option<String>,
+    /// Dictionary as the name of the script as the key, and the value is the scripts that can be executed from the environment
     pub scripts: HashMap<String, Script>,
 }
 
 impl Environment {
+    /// If is the metadata is valid,return the
     pub fn from_metadata(meta: Metadata) -> Result<Self> {
         Ok(Self {
-            name: meta.name.clone().ok_or(anyhow!("name undefined"))?,
-            description: meta.description.clone(),
-            source: meta.source.clone(),
-            script_interpreter: meta.script_interpreter.clone(),
             scripts: meta
                 .scripts
                 .clone()
@@ -49,6 +68,10 @@ impl Environment {
                 .into_iter()
                 .map(|(k, v)| (k, metadatascript_to_script(v, &meta)))
                 .collect(),
+            name: meta.name.ok_or(anyhow!("name undefined"))?,
+            description: meta.description,
+            source: meta.source,
+            script_interpreter: meta.script_interpreter,
             categories: meta.categories.unwrap_or(HashSet::default()),
             details: if let Some(environment_type) = meta.environment_type {
                 match environment_type {
@@ -72,38 +95,7 @@ impl Environment {
             }),
         })
     }
-
-    pub fn into_metadata(self) -> Metadata {
-        let environment_type = Some(self.details.enviroment_type());
-        let (path, languages) = match self.details {
-            EnvironmentDetails::Project { languages } => (None, Some(languages)),
-            EnvironmentDetails::SubProject { path } => (Some(path), None),
-            EnvironmentDetails::Folder => (None, None),
-        };
-        Metadata {
-            environment_type,
-            languages,
-            path,
-            name: Some(self.name),
-            description: self.description,
-            categories: Some(self.categories),
-            source: self.source,
-            script_interpreter: self.script_interpreter,
-            children: Some(
-                self.children
-                    .into_iter()
-                    .map(|env| env.into_metadata())
-                    .collect(),
-            ),
-            scripts: Some(
-                self.scripts
-                    .into_iter()
-                    .map(|(str, script)| (str, script.into_metadata_script()))
-                    .collect(),
-            ),
-        }
-    }
-
+    /// If the open script exists, execute it, if not, execute the default open script, if is a `project`
     pub fn open(self: Environment) -> Result<()> {
         match self.details {
             EnvironmentDetails::Folder => Err(anyhow!("the environment is a folder"))?,
@@ -116,22 +108,56 @@ impl Environment {
                         Script::new(None, format!("code {}", self.source.display()), self.source)
                     });
                 println!("running: {}", &open_command.value);
-                open_command.to_process()?.status()?;
+                open_command.to_command()?.status()?;
             }
             EnvironmentDetails::SubProject { .. } => Err(anyhow!("the path is a subproject"))?,
         }
         Ok(())
     }
+    /// If a script named `name_script` exists, execute the script
     pub fn run_script(self, name_script: &str) -> Result<()> {
         self.scripts
             .get(name_script)
             .context("script not found")?
-            .to_process()?
+            .to_command()?
             .status()?;
         Ok(())
     }
 }
 
+impl From<Environment> for Metadata {
+    fn from(env: Environment) -> Metadata {
+        let environment_type = Some(env.details.enviroment_type());
+        let (path, languages) = match env.details {
+            EnvironmentDetails::Project { languages } => (None, Some(languages)),
+            EnvironmentDetails::SubProject { path } => (Some(path), None),
+            EnvironmentDetails::Folder => (None, None),
+        };
+        Metadata {
+            environment_type,
+            languages,
+            path,
+            name: Some(env.name),
+            description: env.description,
+            categories: Some(env.categories),
+            source: env.source,
+            script_interpreter: env.script_interpreter,
+            children: Some(
+                env.children
+                    .into_iter()
+                    .map(Metadata::from)
+                    .collect(),
+            ),
+            scripts: Some(
+                env.scripts
+                    .into_iter()
+                    .map(|(str, script)| (str, MetadataScript::from(script)))
+                    .collect(),
+            ),
+        }
+    }
+} 
+/// convert a script of metadata to a script 
 fn metadatascript_to_script(v: MetadataScript, meta: &Metadata) -> Script {
     match v {
         Struct {
@@ -143,9 +169,7 @@ fn metadatascript_to_script(v: MetadataScript, meta: &Metadata) -> Script {
             interpreter: interpreter
                 .or(meta.script_interpreter.clone())
                 .unwrap_or_else(default_shell_interpreter),
-            directory: meta
-                .source
-                .join(directory.unwrap_or(PathBuf::from("."))),
+            directory: meta.source.join(directory.unwrap_or(PathBuf::from("."))),
         },
         Scalar(value) => Script {
             interpreter: default_shell_interpreter(),

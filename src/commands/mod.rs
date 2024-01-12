@@ -1,3 +1,5 @@
+//! Commands that will be executed when the program runs
+
 mod command_dir;
 mod command_find;
 mod command_global;

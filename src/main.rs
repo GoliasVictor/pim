@@ -1,4 +1,6 @@
+//! A project manager
 #![warn(missing_docs)]
+
 
 pub mod commands;
 pub mod environment;
