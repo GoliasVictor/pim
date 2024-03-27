@@ -11,11 +11,10 @@ pub mod prelude;
 pub mod providers;
 pub mod terminal;
 pub mod config;
-
-use clap::Parser;
+ 
 use commands::*;
 use prelude::*;
 
-fn main() -> Result<()>{
-    Cli::parse().execute()
+fn main() {
+    println!("{}",clap_markdown::help_markdown::<Cli>());
 }

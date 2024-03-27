@@ -8,7 +8,7 @@ pub fn get_dirs(path: &Path) -> Result<impl IntoIterator<Item = DirEntry>> {
     Ok(read_dir(path)
         .context(format!("failed to read directory {}", path.display()))?
         .filter_map(Result::ok)
-        .filter(|entry| entry.metadata().map(|m| m.is_dir()).unwrap_or(false)))
+        .filter(|entry| entry.metadata().map_or(false, |m| m.is_dir())))
 }
 
 /// if can read the dirs of the path, extract environments recursively from directories

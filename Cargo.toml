@@ -7,6 +7,9 @@ edition = "2021"
 name = "pm"
 path = "src/main.rs"
 
+[[bin]]
+name = "helpmd"
+path = "src/helpmd.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
@@ -20,3 +23,4 @@ tabled = "0.12.2"
 clap_complete_command = "0.5.1"
 directories = "5.0.1"
 anyhow = "1.0.72"
+clap-markdown = "0.1.3"
