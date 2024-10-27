@@ -10,10 +10,8 @@ pub mod metadata;
 pub mod prelude;
 pub mod providers;
 pub mod terminal;
-pub mod config;
  
 use commands::*;
-use prelude::*;
 
 fn main() {
     println!("{}",clap_markdown::help_markdown::<Cli>());

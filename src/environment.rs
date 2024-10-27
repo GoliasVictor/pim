@@ -163,18 +163,22 @@ fn metadatascript_to_script(v: MetadataScript, meta: &Metadata) -> Script {
         Struct {
             script,
             interpreter,
-            directory,
-        } => Script {
+            directory, 
+        } => 
+            Script {
             value: script,
             interpreter: interpreter
                 .or(meta.script_interpreter.clone())
                 .unwrap_or_else(default_shell_interpreter),
             directory: meta.source.join(directory.unwrap_or(PathBuf::from("."))),
         },
-        Scalar(value) => Script {
-            interpreter: default_shell_interpreter(),
-            value,
-            directory: meta.source.clone(),
+        Scalar(value) => { 
+            Script {
+                interpreter: meta.script_interpreter.clone()
+                    .unwrap_or_else(default_shell_interpreter),
+                value,
+                directory: meta.source.clone(),
+            }
         },
     }
 }

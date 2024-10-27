@@ -10,7 +10,6 @@ pub mod metadata;
 pub mod prelude;
 pub mod providers;
 pub mod terminal;
-pub mod config;
 
 use clap::Parser;
 use commands::*;

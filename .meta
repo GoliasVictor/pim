@@ -1,7 +1,8 @@
 type: project
 languages: [ rust ]
 categories: [ cli ]
+script_interpreter: node -e
+
 scripts:
-  release: | 
-      cargo build --release 
-      cp ./target/release/pm ~/MyApps/bin/pm -f
+  release: cargo build --release 
+      
