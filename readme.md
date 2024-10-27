@@ -1,26 +1,26 @@
-# Command-Line Help for `pm`
+# Command-Line Help for `pim`
 
-This document contains the help content for the `pm` command-line program.
+This document contains the help content for the `pim` command-line program.
 
 **Command Overview:**
 
-* [`pm`↴](#pm)
-* [`pm find`↴](#pm-find)
-* [`pm open`↴](#pm-open)
-* [`pm dir`↴](#pm-dir)
-* [`pm list`↴](#pm-list)
-* [`pm run`↴](#pm-run)
-* [`pm new`↴](#pm-new)
-* [`pm info`↴](#pm-info)
-* [`pm info is-env`↴](#pm-info-is-env)
-* [`pm info property`↴](#pm-info-property)
-* [`pm completions`↴](#pm-completions)
+* [`pim`↴](#pim)
+* [`pim find`↴](#pim-find)
+* [`pim open`↴](#pim-open)
+* [`pim dir`↴](#pim-dir)
+* [`pim list`↴](#pim-list)
+* [`pim run`↴](#pim-run)
+* [`pim new`↴](#pim-new)
+* [`pim info`↴](#pim-info)
+* [`pim info is-env`↴](#pim-info-is-env)
+* [`pim info property`↴](#pim-info-property)
+* [`pim completions`↴](#pim-completions)
 
-## `pm`
+## `pim`
 
 Project Manager
 
-**Usage:** `pm [OPTIONS] <COMMAND>`
+**Usage:** `pim [OPTIONS] <COMMAND>`
 
 ###### **Subcommands:**
 
@@ -39,11 +39,11 @@ Project Manager
 
 
 
-## `pm find`
+## `pim find`
 
 Find environments who match the filters
 
-**Usage:** `pm find [OPTIONS]`
+**Usage:** `pim find [OPTIONS]`
 
 ###### **Options:**
 
@@ -64,11 +64,11 @@ Find environments who match the filters
 
 
 
-## `pm open`
+## `pim open`
 
 Open a environmnet (run the `open` script or open vscode in the environment directory)
 
-**Usage:** `pm open <ENVIRONMENT>`
+**Usage:** `pim open <ENVIRONMENT>`
 
 ###### **Arguments:**
 
@@ -76,11 +76,11 @@ Open a environmnet (run the `open` script or open vscode in the environment dire
 
 
 
-## `pm dir`
+## `pim dir`
 
 Show the directory of project
 
-**Usage:** `pm dir <ENVIRONMENT>`
+**Usage:** `pim dir <ENVIRONMENT>`
 
 ###### **Arguments:**
 
@@ -88,11 +88,11 @@ Show the directory of project
 
 
 
-## `pm list`
+## `pim list`
 
 List projects
 
-**Usage:** `pm list [OPTIONS] [FOLDER]`
+**Usage:** `pim list [OPTIONS] [FOLDER]`
 
 ###### **Arguments:**
 
@@ -128,11 +128,11 @@ List projects
 
 
 
-## `pm run`
+## `pim run`
 
 Run a script
 
-**Usage:** `pm run [OPTIONS] [SCRIPT] [-- <PARAMETERS>...]`
+**Usage:** `pim run [OPTIONS] [SCRIPT] [-- <PARAMETERS>...]`
 
 ###### **Arguments:**
 
@@ -141,15 +141,16 @@ Run a script
 
 ###### **Options:**
 
+* `-s`, `--show-list` — show list of scripts
 * `-e`, `--environmnet <ENVIRONMNET>` — Environmnet where is the script
 
 
 
-## `pm new`
+## `pim new`
 
 Create a new environment
 
-**Usage:** `pm new [OPTIONS] [TEMPLATE]`
+**Usage:** `pim new [OPTIONS] [TEMPLATE]`
 
 ###### **Arguments:**
 
@@ -161,11 +162,11 @@ Create a new environment
 
 
 
-## `pm info`
+## `pim info`
 
 Get information about an environment
 
-**Usage:** `pm info [OPTIONS] <COMMAND>`
+**Usage:** `pim info [OPTIONS] <COMMAND>`
 
 ###### **Subcommands:**
 
@@ -179,19 +180,19 @@ Get information about an environment
 
 
 
-## `pm info is-env`
+## `pim info is-env`
 
 Check if the path is within an environment
 
-**Usage:** `pm info is-env`
+**Usage:** `pim info is-env`
 
 
 
-## `pm info property`
+## `pim info property`
 
 get a property from the environment
 
-**Usage:** `pm info property <PROPERTY>`
+**Usage:** `pim info property <PROPERTY>`
 
 ###### **Arguments:**
 
@@ -202,9 +203,9 @@ get a property from the environment
 
 
 
-## `pm completions`
+## `pim completions`
 
-**Usage:** `pm completions <SHELL>`
+**Usage:** `pim completions <SHELL>`
 
 ###### **Arguments:**
 

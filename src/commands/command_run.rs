@@ -11,12 +11,14 @@ use crate::{
 pub struct CommandRun {
     /// Name of script
     script: Option<String>,
+    ///Show list of scripts
+    #[arg(short, long)]
+    show_list: bool ,
 
     /// Environmnet where is the script
     #[arg(short, long)]
     environmnet: Option<String>,
-
-    /// Parameters added to the end of the script
+    /// parameters added to the end of the script
     #[arg(last=true)]
     parameters: Vec<String>,
 }
@@ -33,7 +35,10 @@ impl CommandRun {
             )
             .context("environmnet not found")?;
 
-        if let Some(name_script) = self.script {
+        if self.show_list{
+            self.print_scripts_list(env)
+        }
+        else if let Some(name_script) = self.script {
             env.run_script(&name_script)?;
         } else {
             self.print_scripts(env)
@@ -52,6 +57,12 @@ impl CommandRun {
             }
             let table = builder.build().with(Style::sharp()).to_string();
             println!("{}", table);
+        }
+    }
+
+    fn print_scripts_list(self, env: Environment) {
+        for (k, _) in env.scripts {
+            println!("{}", k);
         }
     }
 }
