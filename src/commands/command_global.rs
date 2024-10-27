@@ -31,8 +31,8 @@ pub struct GlobalArgs {
 /// Project Manager 
 #[derive(Parser)]
 #[command(
-    name = "pm",
-    id = "pm",
+    name = "pim",
+    id = "pim",
     infer_subcommands = true,
     infer_long_args = true
 )]

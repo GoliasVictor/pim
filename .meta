@@ -2,7 +2,6 @@ name: pim
 type: project
 languages: [ rust ]
 categories: [ cli ]
-script_interpreter: node -e
 
 scripts:
   release: cargo build --release 
